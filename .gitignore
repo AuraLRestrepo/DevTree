@@ -1,0 +1,7 @@
+# Archivos
+node_modules/
+.env
+dist/
+build/
+coverage/
+package-lock.json

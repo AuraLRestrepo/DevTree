@@ -1,0 +1,4 @@
+name: root
+password: e7BaC1x0hFwfHwiF;
+
+mongodb+srv://root:<db_password>@cluster0.v8eosbe.mongodb.net/
