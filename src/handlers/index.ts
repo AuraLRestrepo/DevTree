@@ -4,6 +4,7 @@ import { validationResult } from 'express-validator';
 import slug from 'slug';
 import User from "../models/User";
 import { hashPassword, comparePassword } from "../utils/auth";
+import { generateJWT } from "../utils/jwt";
 
 export const createAccount = async (req: Request, res: Response) => {
     // Evitar usuarios duplicados
@@ -51,5 +52,6 @@ export const login = async (req: Request, res: Response) => {
         return res.status(401).json({error: error.message});
     }
 
-    res.status(200).json({message: 'Login exitoso'});
+    const token = generateJWT({id: user._id});
+    res.send(token);
 }

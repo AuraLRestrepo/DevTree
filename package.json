@@ -6,24 +6,29 @@
   "author": "AuraLRestrepo",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch src/index.ts",
-    "devnode": "nodemon src/index.ts",
+    "devnode": "node --watch src/index.ts",
+    "dev": "nodemon src/index.ts",
+    "dev:api": "nodemon src/index.ts --api",
     "build": "tsc",
     "start": "node dist/index.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "colors": "^1.4.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
+    "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.2",
     "slug": "^11.0.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/slug": "^5.0.9",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
