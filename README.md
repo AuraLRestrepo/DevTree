@@ -22,6 +22,7 @@ Actualmente el repositorio contiene una arquitectura inicial basada en:
 - **TypeScript**
 - **Node.js**
 - **npm**
+- **JWT**
 
 ---
 
