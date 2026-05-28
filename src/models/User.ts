@@ -1,13 +1,14 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 // Convecion para interfaces INombreInterfaz
 // Convencion para Type TNombreType
 
-interface IUser {
+export interface IUser extends Document {
     handle: string;
     name: string;
     email: string;
     password: string;
+    description?: string;
 }
 
 const userSchema = new Schema({
@@ -35,6 +36,11 @@ const userSchema = new Schema({
         require: true,
         trim: true
     },
+    description: {
+        type: String,
+        default: "",
+        required: false,
+    }
 });
 
 const User = mongoose.model<IUser>('User', userSchema);
