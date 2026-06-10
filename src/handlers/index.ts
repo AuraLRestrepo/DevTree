@@ -1,9 +1,12 @@
 import type { Request, Response } from "express";
 // import  { Request, Response } from "express";
+import formidable from "formidable";
+import { v4 as uuid } from "uuid";
 import slug from "slug";
 import User from "../models/User";
 import { hashPassword, comparePassword } from "../utils/auth";
 import { generateJWT } from "../utils/jwt";
+import cloudinary from "../config/cloudinary";
 
 export const createAccount = async (req: Request, res: Response) => {
   // Evitar usuarios duplicados
@@ -66,9 +69,9 @@ export const getUser = async (req: Request, res: Response) => {
 
 export const updateProfile = async (req: Request, res: Response) => {
   try {
-    const { description } = req.body;
+    const { description, links } = req.body;
 
-    const handle= slug(req.body.handle, "");
+    const handle = slug(req.body.handle, "");
     const handleExist = await User.findOne({ handle });
     if (handleExist && handleExist.email !== req.user.email) {
       const error = new Error("Nombre de usuario ya registrado");
@@ -77,10 +80,41 @@ export const updateProfile = async (req: Request, res: Response) => {
 
     // Actualizar el perfil del usuario
     req.user.description = description || req.user.description;
+    req.user.links = links || req.user.links;
     req.user.handle = handle || req.user.handle;
     await req.user.save();
     res.send("Perfil actualizado correctamente");
+  } catch (err) {
+    const error = new Error("Error al actualizar el perfil");
+    res.status(500).json({ error: error.message });
+  }
+};
 
+export const uploadProfileImage = async (req: Request, res: Response) => {
+  const form = formidable({ multiples: false });
+  try {
+    form.parse(req, async (err, fields, files) => {
+      cloudinary.uploader.upload(
+        files.file[0].filepath,
+        { public_id: `profile_images/${uuid()}`, folder: "profile_images" },
+        async (error, result) => {
+          
+          if (result) {
+            req.user.imageUrl = result.secure_url;
+            await req.user.save();
+            res.json({
+              message: "Imagen de perfil actualizada correctamente",
+              imageUrl: result.secure_url,
+            });
+          }
+          
+          if (error) {
+            const uploadError = new Error("Error al subir la imagen");
+            return res.status(500).json({ error: uploadError.message });
+          }
+        },
+      );      
+    });
   } catch (err) {
     const error = new Error("Error al actualizar el perfil");
     res.status(500).json({ error: error.message });

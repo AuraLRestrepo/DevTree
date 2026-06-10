@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { createAccount, login, getUser, updateProfile } from "./handlers";
+import { createAccount, login, getUser, updateProfile, uploadProfileImage } from "./handlers";
 import { handlerInputErrors } from "./middleware/validation";
 import { authenticateToken } from "./middleware/auth";
 
@@ -35,8 +35,9 @@ router.patch(
   authenticateToken,
   updateProfile,
 );
-
 // PUT crea o reemplaza un recurso completo
 // PATCH actualiza parcialmente un recurso existente
+
+router.post("/user/image", authenticateToken, uploadProfileImage);
 
 export default router;
