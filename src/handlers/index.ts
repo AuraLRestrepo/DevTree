@@ -98,7 +98,6 @@ export const uploadProfileImage = async (req: Request, res: Response) => {
         files.file[0].filepath,
         { public_id: `profile_images/${uuid()}`, folder: "profile_images" },
         async (error, result) => {
-          
           if (result) {
             req.user.imageUrl = result.secure_url;
             await req.user.save();
@@ -107,14 +106,49 @@ export const uploadProfileImage = async (req: Request, res: Response) => {
               imageUrl: result.secure_url,
             });
           }
-          
+
           if (error) {
             const uploadError = new Error("Error al subir la imagen");
             return res.status(500).json({ error: uploadError.message });
           }
         },
-      );      
+      );
     });
+  } catch (err) {
+    const error = new Error("Error al actualizar el perfil");
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const getUserByHandle = async (req: Request, res: Response) => {
+  try {
+    const { handle } = req.params;
+    const user = await User.findOne({ handle }).select(
+      "-_id -__v -email -password",
+    );
+    if (!user) {
+      const error = new Error("El usuario no existe");
+      return res.status(404).json({ error: error.message });
+    }
+    res.json(user);
+  } catch (err) {
+    const error = new Error("Error al actualizar el perfil");
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const searchByHandle = async (req: Request, res: Response) => {
+  try {
+    const { handle } = req.body;
+    const userExists = await User.findOne({handle})
+
+    if(userExists) {
+      const error = new Error(`${handle} ya esta registrado`);
+      return res.status(409).json({ error: error.message });
+    }
+
+    res.send(`${handle} está disponible`)
+
   } catch (err) {
     const error = new Error("Error al actualizar el perfil");
     res.status(500).json({ error: error.message });

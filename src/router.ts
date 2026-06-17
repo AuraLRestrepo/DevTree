@@ -1,6 +1,14 @@
 import { Router } from "express";
 import { body } from "express-validator";
-import { createAccount, login, getUser, updateProfile, uploadProfileImage } from "./handlers";
+import {
+  createAccount,
+  login,
+  getUser,
+  updateProfile,
+  uploadProfileImage,
+  getUserByHandle,
+  searchByHandle,
+} from "./handlers";
 import { handlerInputErrors } from "./middleware/validation";
 import { authenticateToken } from "./middleware/auth";
 
@@ -30,7 +38,7 @@ router.post(
 router.get("/user", authenticateToken, getUser);
 router.patch(
   "/user",
-  body("handle").notEmpty().withMessage("El handle no puede ir vacio"),  
+  body("handle").notEmpty().withMessage("El handle no puede ir vacio"),
   handlerInputErrors,
   authenticateToken,
   updateProfile,
@@ -39,5 +47,16 @@ router.patch(
 // PATCH actualiza parcialmente un recurso existente
 
 router.post("/user/image", authenticateToken, uploadProfileImage);
+
+// publico
+router.get("/:handle", getUserByHandle);
+
+// Revisar si el handle existe
+router.post(
+  "/search",
+  body("handle").notEmpty().withMessage("El handle no puede ir vacio"),
+  handlerInputErrors,
+  searchByHandle,
+);
 
 export default router;
